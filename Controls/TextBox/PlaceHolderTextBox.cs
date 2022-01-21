@@ -9,6 +9,7 @@ namespace Bian.Controls
     /// </summary>
     public class PlaceHolderTextBox : TextBox
     {
+        /* 旧版本
         private bool _isPlaceHolder = true;
         private string _placeHolderText;
 
@@ -76,6 +77,35 @@ namespace Bian.Controls
         private void RemovePlaceHolder(object sender, EventArgs e)
         {
             RemovePlaceHolder();
+        }
+        */
+
+        private string _placeholderText;
+        public string PlaceholderText
+        {
+            get { return _placeholderText; }
+            set
+            {
+                _placeholderText = value;
+                base.Invalidate();
+            }
+        }
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+            if (m.Msg == 0xF || m.Msg == 0x133)
+            {
+                WmPaint(ref m);
+            }
+        }
+
+        private void WmPaint(ref Message m)
+        {
+            Graphics g = Graphics.FromHwnd(this.Handle);
+            if (!String.IsNullOrEmpty(this._placeholderText) && string.IsNullOrEmpty(this.Text))
+            {
+                g.DrawString(this._placeholderText, new Font(this.Font, FontStyle.Italic), new SolidBrush(Color.LightGray), 0, 0);
+            }
         }
     }
 }
