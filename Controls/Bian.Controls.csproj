@@ -64,8 +64,12 @@
     <Compile Include="HWndCtrl\HWndCtrl.cs" />
     <Compile Include="HWndCtrl\HWndMessage.cs" />
     <Compile Include="HWndCtrl\ROI.cs" />
+    <Compile Include="HWndCtrl\ROICircle.cs" />
+    <Compile Include="HWndCtrl\ROICircularArc.cs" />
     <Compile Include="HWndCtrl\ROIController.cs" />
+    <Compile Include="HWndCtrl\ROILine.cs" />
     <Compile Include="HWndCtrl\ROIRectangle1.cs" />
+    <Compile Include="HWndCtrl\ROIRectangle2.cs" />
     <Compile Include="HWndCtrl\ShowMessageEventArgs.cs" />
     <Compile Include="HWndCtrl\ROIEventArgs.cs" />
     <Compile Include="TextBox\PlaceHolderTextBox.cs">
