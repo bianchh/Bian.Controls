@@ -9,9 +9,10 @@ namespace Bian.Controls.HWndCtrl
     public class ROICircle : ROI
     {
 
-        private double radius;     //半径
+        public double Radius { get; set; }     //半径
         private double row1, col1;  // 圆上的点
-        private double midR, midC;  // 圆心
+        public double MidR { set; get; }
+        public double MidC { get; set; }  // 圆心
 
 
         public ROICircle()
@@ -28,15 +29,15 @@ namespace Bian.Controls.HWndCtrl
         public override void CreateROI(double midX, double midY)
         {
             //圆心为鼠标所在点
-            midR = midY;
-            midC = midX;
+            MidR = midY;
+            MidC = midX;
 
 
             int width = GetHandleWidth();
-            radius = width * 10.0;
+            Radius = width * 10.0;
             //圆上的点
-            row1 = midR;
-            col1 = midC + radius;
+            row1 = MidR;
+            col1 = MidC + Radius;
         }
 
         /// <summary>绘制圆形坐标在窗体上</summary>
@@ -44,12 +45,12 @@ namespace Bian.Controls.HWndCtrl
         public override void Draw(HWindow window)
         {
             //显示圆
-            window.DispCircle(midR, midC, radius);
+            window.DispCircle(MidR, MidC, Radius);
 
             int width = GetHandleWidth();
             //显示两个控制框
             window.DispRectangle2(row1, col1, 0, width, width);
-            window.DispRectangle2(midR, midC, 0, width, width);
+            window.DispRectangle2(MidR, MidC, 0, width, width);
 
         }
 
@@ -65,7 +66,7 @@ namespace Bian.Controls.HWndCtrl
             double[] val = new double[NumHandles];
 
             val[0] = HMisc.DistancePp(y, x, row1, col1); // border handle 
-            val[1] = HMisc.DistancePp(y, x, midR, midC); // midpoint 
+            val[1] = HMisc.DistancePp(y, x, MidR, MidC); // midpoint 
 
             for (int i = 0; i < NumHandles; i++)
             {
@@ -90,7 +91,7 @@ namespace Bian.Controls.HWndCtrl
                     window.DispRectangle2(row1, col1, 0, width, width);
                     break;
                 case 1://圆心
-                    window.DispRectangle2(midR, midC, 0, width, width);
+                    window.DispRectangle2(MidR, MidC, 0, width, width);
                     break;
             }
         }
@@ -99,7 +100,7 @@ namespace Bian.Controls.HWndCtrl
         public override HRegion GetRegion()
         {
             HRegion region = new HRegion();
-            region.GenCircle(midR, midC, radius);
+            region.GenCircle(MidR, MidC, Radius);
             return region;
         }
         /// <summary>
@@ -110,15 +111,15 @@ namespace Bian.Controls.HWndCtrl
         /// <returns></returns>
         public override double GetDistanceFromStartPoint(double row, double col)
         {
-            double sRow = midR; // assumption: we have an angle starting at 0.0
-            double sCol = midC + 1 * radius;
+            double sRow = MidR; // assumption: we have an angle starting at 0.0
+            double sCol = MidC + 1 * Radius;
 
-            double angle = HMisc.AngleLl(midR, midC, sRow, sCol, midR, midC, row, col);
+            double angle = HMisc.AngleLl(MidR, MidC, sRow, sCol, MidR, MidC, row, col);
 
             if (angle < 0)
                 angle += 2 * Math.PI;
 
-            return (radius * angle);
+            return (Radius * angle);
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace Bian.Controls.HWndCtrl
         /// </summary> 
         public override HTuple GetModelData()
         {
-            return new HTuple(new double[] { midR, midC, radius });
+            return new HTuple(new double[] { MidR, MidC, Radius });
         }
 
         /// <summary> 
@@ -144,18 +145,18 @@ namespace Bian.Controls.HWndCtrl
                     row1 = newY;
                     col1 = newX;
                     HOperatorSet.DistancePp(new HTuple(row1), new HTuple(col1),
-                                            new HTuple(midR), new HTuple(midC),
+                                            new HTuple(MidR), new HTuple(MidC),
                                             out distance);
 
-                    radius = distance[0].D;
+                    Radius = distance[0].D;
                     break;
                 case 1: // 鼠标在圆心上时
 
-                    shiftY = midR - newY;
-                    shiftX = midC - newX;
+                    shiftY = MidR - newY;
+                    shiftX = MidC - newX;
 
-                    midR = newY;
-                    midC = newX;
+                    MidR = newY;
+                    MidC = newX;
 
                     row1 -= shiftY;
                     col1 -= shiftX;

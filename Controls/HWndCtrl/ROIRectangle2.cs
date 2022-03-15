@@ -17,19 +17,19 @@ namespace Bian.Controls.HWndCtrl
     {
 
         /// <summary>Half length of the rectangle side, perpendicular to phi</summary>
-        private double length1;
+        public double Length1 { get; set; }
 
         /// <summary>Half length of the rectangle side, in direction of phi</summary>
-        private double length2;
+        public double Length2 { get; set; }
 
         /// <summary>Row coordinate of midpoint of the rectangle</summary>
-        private double midR;
+        public double MidR { get; set; }
 
         /// <summary>Column coordinate of midpoint of the rectangle</summary>
-        private double midC;
+        public double MidC { get; set; }
 
         /// <summary>Orientation of rectangle defined in radians.</summary>
-        private double phi;
+        public double Phi { get; set; }
 
         //auxiliary variables
         HTuple rowsInit;
@@ -67,13 +67,13 @@ namespace Bian.Controls.HWndCtrl
 
             int width = GetHandleWidth();
 
-            midR = midY;
-            midC = midX;
+            MidR = midY;
+            MidC = midX;
 
-            length1 = width * 10;
-            length2 = width * 5;
+            Length1 = width * 10;
+            Length2 = width * 5;
 
-            phi = 0.0;
+            Phi = 0.0;
 
             rowsInit = new HTuple(new double[] {-1.0, -1.0, 1.0,
                                                    1.0,  0.0, 0.0 });
@@ -92,12 +92,12 @@ namespace Bian.Controls.HWndCtrl
         {
 
             int width = GetHandleWidth();
-            window.DispRectangle2(midR, midC, -phi, length1, length2);
+            window.DispRectangle2(MidR, MidC, -Phi, Length1, Length2);
             for (int i = 0; i < NumHandles; i++)
-                window.DispRectangle2(rows[i].D, cols[i].D, -phi, width, width);
+                window.DispRectangle2(rows[i].D, cols[i].D, -Phi, width, width);
 
-            window.DispArrow(midR, midC, midR + (Math.Sin(phi) * length1 * 1.2),
-                midC + (Math.Cos(phi) * length1 * 1.2), width / 3.0);
+            window.DispArrow(MidR, MidC, MidR + (Math.Sin(Phi) * Length1 * 1.2),
+                MidC + (Math.Cos(Phi) * Length1 * 1.2), width / 3.0);
             if (info != null && info.Length > 0)
             {
 #if NativeCode
@@ -149,12 +149,12 @@ namespace Bian.Controls.HWndCtrl
             int width = GetHandleWidth();
             window.DispRectangle2(rows[activeHandleIdx].D,
                                   cols[activeHandleIdx].D,
-                                  -phi, width, width);
+                                  -Phi, width, width);
 
             if (activeHandleIdx == 5)
-                window.DispArrow(midR, midC,
-                                 midR + (Math.Sin(phi) * length1 * 1.2),
-                                 midC + (Math.Cos(phi) * length1 * 1.2),
+                window.DispArrow(MidR, MidC,
+                                 MidR + (Math.Sin(Phi) * Length1 * 1.2),
+                                 MidC + (Math.Cos(Phi) * Length1 * 1.2),
                                  width / 3.0);
         }
 
@@ -163,7 +163,7 @@ namespace Bian.Controls.HWndCtrl
         public override HRegion GetRegion()
         {
             HRegion region = new HRegion();
-            region.GenRectangle2(midR, midC, -phi, length1, length2);
+            region.GenRectangle2(MidR, MidC, -Phi, Length1, Length2);
             return region;
         }
 
@@ -173,7 +173,7 @@ namespace Bian.Controls.HWndCtrl
         /// </summary> 
         public override HTuple GetModelData()
         {
-            return new HTuple(new double[] { midR, midC, phi, length1, length2 });
+            return new HTuple(new double[] { MidR, MidC, Phi, Length1, Length2 });
         }
 
         /// <summary> 
@@ -193,36 +193,36 @@ namespace Bian.Controls.HWndCtrl
 
                     HOperatorSet.DistancePl(newY, newX, rows[1], cols[1], rows[2], cols[2], out l1);
                     HOperatorSet.DistancePl(newY, newX, rows[3], cols[3], rows[2], cols[2], out l2);
-                    length1 = Math.Abs(l1.D) / 2.0;
-                    length2 = Math.Abs(l2.D) / 2.0;
-                    midR = (newY + rows[2].D) / 2.0;
-                    midC = (newX + cols[2].D) / 2.0;
+                    Length1 = Math.Abs(l1.D) / 2.0;
+                    Length2 = Math.Abs(l2.D) / 2.0;
+                    MidR = (newY + rows[2].D) / 2.0;
+                    MidC = (newX + cols[2].D) / 2.0;
                     break;
                 case 1:
 
                     HOperatorSet.DistancePl(newY, newX, rows[2], cols[2], rows[3], cols[3], out l1);
                     HOperatorSet.DistancePl(newY, newX, rows[3], cols[3], rows[0], cols[0], out l2);
-                    length2 = Math.Abs(l1.D) / 2.0;
-                    length1 = Math.Abs(l2.D) / 2.0;
-                    midR = (newY + rows[3].D) / 2.0;
-                    midC = (newX + cols[3].D) / 2.0;
+                    Length2 = Math.Abs(l1.D) / 2.0;
+                    Length1 = Math.Abs(l2.D) / 2.0;
+                    MidR = (newY + rows[3].D) / 2.0;
+                    MidC = (newX + cols[3].D) / 2.0;
                     break;
                 case 2:
                     HOperatorSet.DistancePl(newY, newX, rows[0], cols[0], rows[1], cols[1], out l1);
                     HOperatorSet.DistancePl(newY, newX, rows[3], cols[3], rows[0], cols[0], out l2);
-                    length2 = Math.Abs(l1.D) / 2.0;
-                    length1 = Math.Abs(l2.D) / 2.0;
-                    midR = (newY + rows[0].D) / 2.0;
-                    midC = (newX + cols[0].D) / 2.0;
+                    Length2 = Math.Abs(l1.D) / 2.0;
+                    Length1 = Math.Abs(l2.D) / 2.0;
+                    MidR = (newY + rows[0].D) / 2.0;
+                    MidC = (newX + cols[0].D) / 2.0;
                     break;
                 case 3:
 
                     HOperatorSet.DistancePl(newY, newX, rows[0], cols[0], rows[1], cols[1], out l1);
                     HOperatorSet.DistancePl(newY, newX, rows[1], cols[1], rows[2], cols[2], out l2);
-                    length2 = Math.Abs(l1.D) / 2.0;
-                    length1 = Math.Abs(l2.D) / 2.0;
-                    midR = (newY + rows[1].D) / 2.0;
-                    midC = (newX + cols[1].D) / 2.0;
+                    Length2 = Math.Abs(l1.D) / 2.0;
+                    Length1 = Math.Abs(l2.D) / 2.0;
+                    MidR = (newY + rows[1].D) / 2.0;
+                    MidC = (newX + cols[1].D) / 2.0;
                     break;
                 //               tmp = hom2D.HomMat2dInvert();
                 //x = tmp.AffineTransPoint2d(newX, newY, out y);
@@ -234,14 +234,14 @@ namespace Bian.Controls.HWndCtrl
                 //               break;
 
                 case 4://平移
-                    midC = newX;
-                    midR = newY;
+                    MidC = newX;
+                    MidR = newY;
                     // updateHandlePos();
                     break;
                 case 5://旋转
                     vY = newY - rows[4].D;
                     vX = newX - cols[4].D;
-                    phi = Math.Atan2(vY, vX);
+                    Phi = Math.Atan2(vY, vX);
 
                     break;
             }
@@ -262,11 +262,11 @@ namespace Bian.Controls.HWndCtrl
         {
             hom2D.HomMat2dIdentity();
             //平移
-            hom2D = hom2D.HomMat2dTranslate(midC, midR);
+            hom2D = hom2D.HomMat2dTranslate(MidC, MidR);
             //旋转
-            hom2D = hom2D.HomMat2dRotateLocal(phi);
+            hom2D = hom2D.HomMat2dRotateLocal(Phi);
             //缩放
-            tmp = hom2D.HomMat2dScaleLocal(length1, length2);
+            tmp = hom2D.HomMat2dScaleLocal(Length1, Length2);
             // tmp=hom2D
             cols = tmp.AffineTransPoint2d(colsInit, rowsInit, out rows);
         }
@@ -285,26 +285,26 @@ namespace Bian.Controls.HWndCtrl
                 case 0:
                     if ((x < 0) && (y < 0))
                         return;
-                    if (x >= 0) length1 = 0.01;
-                    if (y >= 0) length2 = 0.01;
+                    if (x >= 0) Length1 = 0.01;
+                    if (y >= 0) Length2 = 0.01;
                     break;
                 case 1:
                     if ((x > 0) && (y < 0))
                         return;
-                    if (x <= 0) length1 = 0.01;
-                    if (y >= 0) length2 = 0.01;
+                    if (x <= 0) Length1 = 0.01;
+                    if (y >= 0) Length2 = 0.01;
                     break;
                 case 2:
                     if ((x > 0) && (y > 0))
                         return;
-                    if (x <= 0) length1 = 0.01;
-                    if (y <= 0) length2 = 0.01;
+                    if (x <= 0) Length1 = 0.01;
+                    if (y <= 0) Length2 = 0.01;
                     break;
                 case 3:
                     if ((x < 0) && (y > 0))
                         return;
-                    if (x >= 0) length1 = 0.01;
-                    if (y <= 0) length2 = 0.01;
+                    if (x >= 0) Length1 = 0.01;
+                    if (y <= 0) Length2 = 0.01;
                     break;
                 default:
                     break;

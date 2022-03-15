@@ -11,27 +11,27 @@ namespace Bian.Controls.HWndCtrl
         /// <summary>
         /// 起点行坐标
         /// </summary>
-        double startRow;
+        public double StartRow { get; set; }
         /// <summary>
         /// 起点列坐标
         /// </summary>
-        double startCol;
+        public double StartCol { get; set; }
         /// <summary>
         /// 终点行坐标
         /// </summary>
-        double endRow;
+        public double EndRow { get; set; }
         /// <summary>
         /// 终点列坐标
         /// </summary>
-        double endCol;
+        public double EndCol { get; set; }
         /// <summary>
         /// 中点行坐标
         /// </summary>
-        double midRow;
+        public double MidRow { get; set; }
         /// <summary>
         /// 中点列坐标
         /// </summary>
-        double midCol;
+        public double MidCol { get; set; }
 
         [NonSerialized]
         /// <summary>
@@ -61,12 +61,12 @@ namespace Bian.Controls.HWndCtrl
         {
             if (roiDat.Length == 4)
             {
-                startRow = roiDat[0].D;
-                startCol = roiDat[1].D;
-                endRow = roiDat[2].D;
-                endCol = roiDat[3].D;
-                midRow = (startRow + endRow) / 2.0;
-                midCol = (startCol + endCol) / 2.0;
+                StartRow = roiDat[0].D;
+                StartCol = roiDat[1].D;
+                EndRow = roiDat[2].D;
+                EndCol = roiDat[3].D;
+                MidRow = (StartRow + EndRow) / 2.0;
+                MidCol = (StartCol + EndCol) / 2.0;
                 updateArrowHandle();
             }
         }
@@ -81,13 +81,13 @@ namespace Bian.Controls.HWndCtrl
             int width = GetHandleWidth();
 
             //鼠标位置为直线中心
-            midRow = midY;
-            midCol = midX;
+            MidRow = midY;
+            MidCol = midX;
 
-            startRow = midRow;
-            startCol = midCol - width * 5;
-            endRow = midRow;
-            endCol = midCol + width * 5;
+            StartRow = MidRow;
+            StartCol = MidCol - width * 5;
+            EndRow = MidRow;
+            EndCol = MidCol + width * 5;
 
             updateArrowHandle();
         }
@@ -96,15 +96,15 @@ namespace Bian.Controls.HWndCtrl
         public override void Draw(HWindow window)
         {
             //直线绘制
-            window.DispLine(startRow, startCol, endRow, endCol);
+            window.DispLine(StartRow, StartCol, EndRow, EndCol);
 
             int width = GetHandleWidth();
             //直线起点的框
-            window.DispRectangle2(startRow, startCol, 0, width, width);
+            window.DispRectangle2(StartRow, StartCol, 0, width, width);
             //直线终点的箭头
             window.DispObj(arrowHandleXLD);  //window.DispRectangle2( row2, col2, 0, 5, 5);
             //直线中点的框
-            window.DispRectangle2(midRow, midCol, 0, width, width);
+            window.DispRectangle2(MidRow, MidCol, 0, width, width);
 
             //int r1, c1, r2, c2;
             //window.GetPart(out r1, out c1, out r2, out c2);
@@ -125,9 +125,9 @@ namespace Bian.Controls.HWndCtrl
             double max = 10000;
             double[] val = new double[NumHandles];
 
-            val[0] = HMisc.DistancePp(y, x, startRow, startCol); // upper left 
-            val[1] = HMisc.DistancePp(y, x, endRow, endCol); // upper right 
-            val[2] = HMisc.DistancePp(y, x, midRow, midCol); // midpoint 
+            val[0] = HMisc.DistancePp(y, x, StartRow, StartCol); // upper left 
+            val[1] = HMisc.DistancePp(y, x, EndRow, EndCol); // upper right 
+            val[2] = HMisc.DistancePp(y, x, MidRow, MidCol); // midpoint 
 
             for (int i = 0; i < NumHandles; i++)
             {
@@ -150,13 +150,13 @@ namespace Bian.Controls.HWndCtrl
             switch (activeHandleIdx)
             {
                 case 0:
-                    window.DispRectangle2(startRow, startCol, 0, width, width);
+                    window.DispRectangle2(StartRow, StartCol, 0, width, width);
                     break;
                 case 1:
                     window.DispObj(arrowHandleXLD); //window.DispRectangle2(row2, col2, 0, 5, 5);
                     break;
                 case 2:
-                    window.DispRectangle2(midRow, midCol, 0, width, width);
+                    window.DispRectangle2(MidRow, MidCol, 0, width, width);
                     break;
             }
         }
@@ -168,7 +168,7 @@ namespace Bian.Controls.HWndCtrl
         public override HRegion GetRegion()
         {
             HRegion region = new HRegion();
-            region.GenRegionLine(startRow, startCol, endRow, endCol);
+            region.GenRegionLine(StartRow, StartCol, EndRow, EndCol);
             return region;
         }
         /// <summary>
@@ -179,7 +179,7 @@ namespace Bian.Controls.HWndCtrl
         /// <returns>距离值</returns>
         public override double GetDistanceFromStartPoint(double row, double col)
         {
-            double distance = HMisc.DistancePp(row, col, startRow, startCol);
+            double distance = HMisc.DistancePp(row, col, StartRow, StartCol);
             return distance;
         }
         /// <summary>
@@ -187,7 +187,7 @@ namespace Bian.Controls.HWndCtrl
         /// </summary> 
         public override HTuple GetModelData()
         {
-            return new HTuple(new double[] { startRow, startCol, endRow, endCol });
+            return new HTuple(new double[] { StartRow, StartCol, EndRow, EndCol });
         }
 
         /// <summary> 
@@ -200,30 +200,30 @@ namespace Bian.Controls.HWndCtrl
             switch (activeHandleIdx)
             {
                 case 0: // first end point
-                    startRow = newY;
-                    startCol = newX;
+                    StartRow = newY;
+                    StartCol = newX;
 
-                    midRow = (startRow + endRow) / 2;
-                    midCol = (startCol + endCol) / 2;
+                    MidRow = (StartRow + EndRow) / 2;
+                    MidCol = (StartCol + EndCol) / 2;
                     break;
                 case 1: // last end point
-                    endRow = newY;
-                    endCol = newX;
+                    EndRow = newY;
+                    EndCol = newX;
 
-                    midRow = (startRow + endRow) / 2;
-                    midCol = (startCol + endCol) / 2;
+                    MidRow = (StartRow + EndRow) / 2;
+                    MidCol = (StartCol + EndCol) / 2;
                     break;
                 case 2: // midpoint 
-                    lenR = startRow - midRow;
-                    lenC = startCol - midCol;
+                    lenR = StartRow - MidRow;
+                    lenC = StartCol - MidCol;
 
-                    midRow = newY;
-                    midCol = newX;
+                    MidRow = newY;
+                    MidCol = newX;
 
-                    startRow = midRow + lenR;
-                    startCol = midCol + lenC;
-                    endRow = midRow - lenR;
-                    endCol = midCol - lenC;
+                    StartRow = MidRow + lenR;
+                    StartCol = MidCol + lenC;
+                    EndRow = MidRow - lenR;
+                    EndCol = MidCol - lenC;
                     break;
             }
             updateArrowHandle();
@@ -246,16 +246,16 @@ namespace Bian.Controls.HWndCtrl
             arrowHandleXLD.GenEmptyObj();
 
             //箭头起始点为直线长度的0.8位置
-            rrow1 = startRow + (endRow - startRow) * 0.8;
-            ccol1 = startCol + (endCol - startCol) * 0.8;
+            rrow1 = StartRow + (EndRow - StartRow) * 0.8;
+            ccol1 = StartCol + (EndCol - StartCol) * 0.8;
             //测量箭头起始点到直线终点的距离
-            length = HMisc.DistancePp(rrow1, ccol1, endRow, endCol);
+            length = HMisc.DistancePp(rrow1, ccol1, EndRow, EndCol);
             //如果距离为0说明直线长度为0
             if (length == 0)
                 length = -1;
 
-            dr = (endRow - rrow1) / length;
-            dc = (endCol - ccol1) / length;
+            dr = (EndRow - rrow1) / length;
+            dc = (EndCol - ccol1) / length;
 
             halfHW = headWidth / 2.0;
             rowP1 = rrow1 + (length - headLength) * dr + halfHW * dc;
@@ -266,8 +266,8 @@ namespace Bian.Controls.HWndCtrl
             if (length == -1)
                 arrowHandleXLD.GenContourPolygonXld(rrow1, ccol1);
             else
-                arrowHandleXLD.GenContourPolygonXld(new HTuple(new double[] { rrow1, endRow, rowP1, endRow, rowP2, endRow }),
-                                                    new HTuple(new double[] { ccol1, endCol, colP1, endCol, colP2, endCol }));
+                arrowHandleXLD.GenContourPolygonXld(new HTuple(new double[] { rrow1, EndRow, rowP1, EndRow, rowP2, EndRow }),
+                                                    new HTuple(new double[] { ccol1, EndCol, colP1, EndCol, colP2, EndCol }));
         }
 
     }

@@ -18,8 +18,9 @@ namespace Bian.Controls.HWndCtrl
         private double extentR, extentC; // 3. handle
 
         //model data to specify the arc
-        private double radius;
-        private double startPhi, extentPhi; // -2*PI <= x <= 2*PI
+        public double Radius { get; set; }
+        public double StartPhi { set; get; }
+        public double ExtentPhi { set; get; } // -2*PI <= x <= 2*PI
         [NonSerialized]
         //display attributes
         private HXLDCont contour;
@@ -66,13 +67,13 @@ namespace Bian.Controls.HWndCtrl
 
             int width = GetHandleWidth();
 
-            radius = width * 10.0;
+            Radius = width * 10.0;
 
             sizeR = midR;
-            sizeC = midC - radius;
+            sizeC = midC - Radius;
 
-            startPhi = PI * 0.25;
-            extentPhi = PI * 1.5;
+            StartPhi = PI * 0.25;
+            ExtentPhi = PI * 1.5;
             circDir = "positive";
 
             determineArcHandles();
@@ -87,8 +88,8 @@ namespace Bian.Controls.HWndCtrl
             if (contour == null)
                 contour = new HXLDCont();
             contour.Dispose();
-            contour.GenCircleContourXld(midR, midC, radius, startPhi,
-                                        (startPhi + extentPhi), circDir, 1.0);
+            contour.GenCircleContourXld(midR, midC, Radius, StartPhi,
+                                        (StartPhi + ExtentPhi), circDir, 1.0);
             window.DispObj(contour);
 
             int width = GetHandleWidth();
@@ -179,7 +180,7 @@ namespace Bian.Controls.HWndCtrl
 
                     HOperatorSet.DistancePp(new HTuple(sizeR), new HTuple(sizeC),
                                             new HTuple(midR), new HTuple(midC), out distance);
-                    radius = distance[0].D;
+                    Radius = distance[0].D;
                     determineArcHandles();
                     break;
 
@@ -187,19 +188,19 @@ namespace Bian.Controls.HWndCtrl
                     dirY = newY - midR;
                     dirX = newX - midC;
 
-                    startPhi = Math.Atan2(-dirY, dirX);
+                    StartPhi = Math.Atan2(-dirY, dirX);
 
-                    if (startPhi < 0)
-                        startPhi = PI + (startPhi + PI);
+                    if (StartPhi < 0)
+                        StartPhi = PI + (StartPhi + PI);
 
                     setStartHandle();
-                    prior = extentPhi;
-                    extentPhi = HMisc.AngleLl(midR, midC, startR, startC, midR, midC, extentR, extentC);
+                    prior = ExtentPhi;
+                    ExtentPhi = HMisc.AngleLl(midR, midC, startR, startC, midR, midC, extentR, extentC);
 
-                    if (extentPhi < 0 && prior > PI * 0.8)
-                        extentPhi = (PI + extentPhi) + PI;
-                    else if (extentPhi > 0 && prior < -PI * 0.7)
-                        extentPhi = -PI - (PI - extentPhi);
+                    if (ExtentPhi < 0 && prior > PI * 0.8)
+                        ExtentPhi = (PI + ExtentPhi) + PI;
+                    else if (ExtentPhi > 0 && prior < -PI * 0.7)
+                        ExtentPhi = -PI - (PI - ExtentPhi);
 
                     break;
 
@@ -207,32 +208,32 @@ namespace Bian.Controls.HWndCtrl
                     dirY = newY - midR;
                     dirX = newX - midC;
 
-                    prior = extentPhi;
+                    prior = ExtentPhi;
                     next = Math.Atan2(-dirY, dirX);
 
                     if (next < 0)
                         next = PI + (next + PI);
 
-                    if (circDir == "positive" && startPhi >= next)
-                        extentPhi = (next + TwoPI) - startPhi;
-                    else if (circDir == "positive" && next > startPhi)
-                        extentPhi = next - startPhi;
-                    else if (circDir == "negative" && startPhi >= next)
-                        extentPhi = -1.0 * (startPhi - next);
-                    else if (circDir == "negative" && next > startPhi)
-                        extentPhi = -1.0 * (startPhi + TwoPI - next);
+                    if (circDir == "positive" && StartPhi >= next)
+                        ExtentPhi = (next + TwoPI) - StartPhi;
+                    else if (circDir == "positive" && next > StartPhi)
+                        ExtentPhi = next - StartPhi;
+                    else if (circDir == "negative" && StartPhi >= next)
+                        ExtentPhi = -1.0 * (StartPhi - next);
+                    else if (circDir == "negative" && next > StartPhi)
+                        ExtentPhi = -1.0 * (StartPhi + TwoPI - next);
 
-                    valMax = Math.Max(Math.Abs(prior), Math.Abs(extentPhi));
-                    valMin = Math.Min(Math.Abs(prior), Math.Abs(extentPhi));
+                    valMax = Math.Max(Math.Abs(prior), Math.Abs(ExtentPhi));
+                    valMin = Math.Min(Math.Abs(prior), Math.Abs(ExtentPhi));
 
                     if ((valMax - valMin) >= PI)
-                        extentPhi = (circDir == "positive") ? -1.0 * valMin : valMin;
+                        ExtentPhi = (circDir == "positive") ? -1.0 * valMin : valMin;
 
                     setExtentHandle();
                     break;
             }
 
-            circDir = (extentPhi < 0) ? "negative" : "positive";
+            circDir = (ExtentPhi < 0) ? "negative" : "positive";
             updateArrowHandle();
 
             updateStartRect2XLDHandle();
@@ -243,7 +244,7 @@ namespace Bian.Controls.HWndCtrl
         {
             HRegion region;
             contour.Dispose();
-            contour.GenCircleContourXld(midR, midC, radius, startPhi, (startPhi + extentPhi), circDir, 1.0);
+            contour.GenCircleContourXld(midR, midC, Radius, StartPhi, (StartPhi + ExtentPhi), circDir, 1.0);
             region = new HRegion(contour);
             return region;
         }
@@ -253,7 +254,7 @@ namespace Bian.Controls.HWndCtrl
         /// </summary> 
         public override HTuple GetModelData()
         {
-            return new HTuple(new double[] { midR, midC, radius, startPhi, extentPhi });
+            return new HTuple(new double[] { midR, midC, Radius, StartPhi, ExtentPhi });
         }
 
         /// <summary>
@@ -271,8 +272,8 @@ namespace Bian.Controls.HWndCtrl
         /// </summary>
         private void setStartHandle()
         {
-            startR = midR - radius * Math.Sin(startPhi);
-            startC = midC + radius * Math.Cos(startPhi);
+            startR = midR - Radius * Math.Sin(StartPhi);
+            startC = midC + Radius * Math.Cos(StartPhi);
         }
 
         /// <summary>
@@ -280,8 +281,8 @@ namespace Bian.Controls.HWndCtrl
         /// </summary>
         private void setExtentHandle()
         {
-            extentR = midR - radius * Math.Sin(startPhi + extentPhi);
-            extentC = midC + radius * Math.Cos(startPhi + extentPhi);
+            extentR = midR - Radius * Math.Sin(StartPhi + ExtentPhi);
+            extentC = midC + Radius * Math.Cos(StartPhi + ExtentPhi);
         }
 
         /// <summary>
@@ -303,7 +304,7 @@ namespace Bian.Controls.HWndCtrl
 
             row2 = extentR;
             col2 = extentC;
-            angleRad = (startPhi + extentPhi) + Math.PI * 0.5;
+            angleRad = (StartPhi + ExtentPhi) + Math.PI * 0.5;
 
             sign = (circDir == "negative") ? -1.0 : 1.0;
             row1 = row2 + sign * Math.Sin(angleRad) * 20;
@@ -338,7 +339,7 @@ namespace Bian.Controls.HWndCtrl
             startRect2XLD.Dispose();
             startRect2XLD.GenEmptyObj();
             int width = GetHandleWidth();
-            startRect2XLD.GenRectangle2ContourXld(startR, startC, startPhi, width, width / 5);
+            startRect2XLD.GenRectangle2ContourXld(startR, startC, StartPhi, width, width / 5);
 
         }
     }//end of class
