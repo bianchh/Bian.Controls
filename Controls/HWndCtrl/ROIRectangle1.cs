@@ -31,6 +31,16 @@ namespace Bian.Controls.HWndCtrl
             get { return col2; }
         }
 
+        public double MidR
+        {
+            get { return midR; }
+        }
+
+        public double MidC
+        {
+            get { return midC; }
+        }
+
         /// <summary>Constructor</summary>
         public ROIRectangle1()
         {

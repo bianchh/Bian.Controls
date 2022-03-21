@@ -86,6 +86,17 @@ namespace Bian.Controls.HWndCtrl
             updateHandlePos();
         }
 
+        public override void ReCreateROI()
+        {
+            base.ReCreateROI();
+            rowsInit = new HTuple(new double[] { -1.0, -1.0, 1.0, 1.0, 0.0, 0.0 });
+            colsInit = new HTuple(new double[] { -1.0, 1.0, 1.0, -1.0, 0.0, 0.6 });
+            //order  ul, ur, lr, ll, mp, arrowMidpoint
+            hom2D = new HHomMat2D();
+            tmp = new HHomMat2D();
+            updateHandlePos();
+        }
+
         /// <summary>Paints the ROI into the supplied window</summary>
         /// <param name="window">HALCON window</param>
         public override void Draw(HalconDotNet.HWindow window)
